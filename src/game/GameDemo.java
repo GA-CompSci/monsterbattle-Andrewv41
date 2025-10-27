@@ -20,6 +20,7 @@ public class GameDemo {
     
     // The GUI (use this to display everything)
     private MonsterBattleGUI gui;
+
     
     // Game state
     private ArrayList<Monster> monsters;
@@ -54,7 +55,7 @@ public class GameDemo {
      */
     private void setupGame() {
         // Create the GUI
-        gui = new MonsterBattleGUI("Monster Battle - DEMO");
+        gui = new MonsterBattleGUI("Monster Battle - Andrew");
         
         // CHOOSE DIFFICULTY (number of monsters to face)
         int numMonsters = chooseDifficulty();
