@@ -22,6 +22,7 @@ public class Monster {
         this();
         this.special = special;
     }
+
     
     // ACCESSOR METHODS
     public int health() { return this.health; }
@@ -31,6 +32,8 @@ public class Monster {
 
     // MUTATOR METHODS
     public void takeDamage(int dmg){
+
         health -= dmg;
     }
+
 }
