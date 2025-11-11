@@ -26,7 +26,7 @@ public class Game {
     private ArrayList<Monster> monsters;
     private Monster lastAttacked;//to store the last attacked monster
     private ArrayList<Item> inventory;
-    private boolean shieldUp = flase;
+    private double shieldPower = 0;
     private int playerHealth;
     private int playerSpeed;
     private int playerDamage;
@@ -98,7 +98,7 @@ public class Game {
     private void gameLoop() {
         // Keep playing while monsters alive and player alive
         while (countLivingMonsters() > 0 && playerHealth > 0) {
-            shieldUp = false;
+            shieldPower = 0;
 
             // PLAYER'S TURN
             gui.displayMessage("Your turn! HP: " + playerHealth);
@@ -198,12 +198,16 @@ public class Game {
             gui.displayMessage("You chose Healer! Great recovery, but fragile.");
             playerDamage -= (int)(Math.random() * 21) + 5;      // Reduce damage by 5-30
             playerShield -= (int)(Math.random() * 21) + 5;      // Reduce shield by 5-50
+            playerSpeed = (int)(Math.random()*10)+1;
         } else {
             // Ninja: high speed, low healing and health
             gui.displayMessage("You chose Ninja! Fast and deadly, but risky.");
             playerHeal -= (int)(Math.random() * 5) + 5;        // Reduce heal by 5-50
             playerHealth -= (int)(Math.random() * 21) + 5;         // Reduce max health by 5-25
+
+            playerSpeed = (int)(Math.random()*6)+6;
         }
+        if(playerHeal < 0) playerHeal = 0;
         
         gui.setPlayerMaxHealth(playerHealth);
         gui.updatePlayerHealth(playerHealth);
@@ -260,7 +264,6 @@ public class Game {
         gui.highlightMonster(-1);
 
 
-        
 
     }
 
@@ -273,9 +276,10 @@ public class Game {
      * - Something else?
      */
     private void defend() {
-        shieldUp = true;
+        shieldPower = playerShield;
 
         gui.displayMessage("Brace for impact!");
+        
 
     }
 
@@ -287,7 +291,7 @@ public class Game {
      * - Any limits?
      */
     private void heal() {
-        // TODO: Implement your heal!
+        playerHealth += playerHeal;
 
         gui.displayMessage("TODO: Implement heal!");
     }
@@ -316,23 +320,32 @@ public class Game {
      * - Special abilities?
      */
     private void monsterAttack() {
-        ArrayLisrt<Monster> attackers = new ArrayList<>();
-        if(lastAttacked.health()>0 && !attackers.contains(lastAttacked))
-         attackers.add(lastAttacked);
+        // build a list of every monster that gets to take a swipe at us
+        ArrayList<Monster> attackers = getFastMonsters();
+        // first check if there is a lastAttacked
+        if(lastAttacked != null && lastAttacked.health() > 0 && !attackers.contains(lastAttacked)) 
+            attackers.add(lastAttacked);
 
-         for(Monster m: attackers){
-            if(shieldUp){
-                m.damage -= playerShield;
+        for (Monster monster : attackers) {
+            // shoudn't the monster's damage dealt logic be handle in the Monster class? 
+            int damageTaken = (int)(Math.random() * monster.damage() + 1);
+            if (shieldPower > 0) {
+                double absorbance = Math.min(damageTaken, shieldPower);
+                damageTaken -= absorbance;
+                shieldPower -= absorbance;
+                gui.displayMessage("You block for " + absorbance + " damage. You have " + shieldPower + " shield left.");
             }
+            if (damageTaken > 0) {
+                playerHealth -= damageTaken;
+                gui.displayMessage("Monster hits you for " + damageTaken + " damage!");
+                gui.updatePlayerHealth(playerHealth);
+            }
+            int index = monsters.indexOf(monster);
+            gui.highlightMonster(index);
+            gui.pause(300);
+            gui.highlightMonster(-1);
+        }
 
-            playerHealth -= m.damage();
-            //TODO CHECK FOR SHIELD
-            gui.updatePlayerHealth(playerHealth);
-         }
-
-
-
-        gui.displayMessage("TODO: Implement monster attack!");
     }
 
     // ==================== HELPER METHODS ====================
