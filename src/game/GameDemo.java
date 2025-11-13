@@ -197,9 +197,9 @@ public class GameDemo {
         
         // Game over!
         if (playerHealth <= 0) {
-            gui.displayMessage("💀 DEFEAT! You have been defeated...");
+            gui.displayMessage("DEFEAT! You have been defeated...");
         } else {
-            gui.displayMessage("🎉 VICTORY! You defeated all monsters!");
+            gui.displayMessage("VICTORY! You defeated all monsters!");
         }
     }
     
@@ -225,7 +225,7 @@ public class GameDemo {
             int baseDamage = (int)(playerDamage * 0.15);  // 15% of damage stat
             int damage = baseDamage + (int)(Math.random() * baseDamage);  // ±50% variance
             target.takeDamage(damage);
-            gui.displayMessage("💥 You hit for " + damage + " damage!");
+            gui.displayMessage("You hit for " + damage + " damage!");
             
             // Show which one we hit
             int index = monsters.indexOf(target);
@@ -239,7 +239,7 @@ public class GameDemo {
      * Defend (uses playerShield stat to reduce damage)
      */
     private void defend() {
-        gui.displayMessage("🛡️ You brace for impact! (Shield: " + playerShield + ")");
+        gui.displayMessage("Brace for impact! (Shield: " + playerShield + ")");
         // Note: In a real game, you'd track this state and reduce incoming damage
         // This is just demonstrating the character stats
     }
@@ -251,7 +251,7 @@ public class GameDemo {
         int healAmount = (int)(playerHeal * 0.5) + (int)(Math.random() * playerHeal * 0.5);
         playerHealth = Math.min(maxHealth, playerHealth + healAmount);
         gui.updatePlayerHealth(playerHealth);
-        gui.displayMessage("💚 You healed for " + healAmount + " HP!");
+        gui.displayMessage("You healed for " + healAmount + " HP!");
     }
     
     /**
@@ -278,7 +278,7 @@ public class GameDemo {
             int damage = (int)(Math.random() * attacker.damage());
             playerHealth -= damage;
             gui.updatePlayerHealth(playerHealth);
-            gui.displayMessage("👹 Monster attacks! You take " + damage + " damage!");
+            gui.displayMessage("Monster attacks! You take " + damage + " damage!");
         }
     }
     
@@ -311,10 +311,10 @@ public class GameDemo {
      * Add a health potion to inventory
      */
     private void addHealthPotion(int healAmount) {
-        inventory.add(new Item("Health Potion", "🧪", () -> {
+        inventory.add(new Item("Health Potion", " ", () -> {
             playerHealth = Math.min(maxHealth, playerHealth + healAmount);
             gui.updatePlayerHealth(playerHealth);
-            gui.displayMessage("💚 Used Health Potion! Healed " + healAmount + " HP!");
+            gui.displayMessage("Used Health Potion! Healed " + healAmount + " HP!");
         }));
     }
     
@@ -328,7 +328,7 @@ public class GameDemo {
                     m.takeDamage(damage);
                 }
             }
-            gui.displayMessage("💣 BOOM! All monsters take " + damage + " damage!");
+            gui.displayMessage(" BOOM! All monsters take " + damage + " damage!");
             gui.updateMonsters(monsters);
         }));
     }

@@ -62,9 +62,16 @@ public class Game {
         int numMonsters = chooseDifficulty();
         monsters = new ArrayList<>();
         //SHOULD WE ADD SPECIAL ABILITIES?        
+       
         for(int k = 0; k < numMonsters; k++) {
             if(k == 0){
                 monsters.add(new Monster("Vampire"));
+            }else if(k==1){
+                monsters.add(new Monster("Giant"));//Slow, big damage, big health
+            }else if(k == 2){
+                monsters.add(new Monster("Goblin"));//Fast, 
+            }else if(k == 3){
+                monsters.add(new Monster("Dragon"));//flies
             } else { 
                 monsters.add(new Monster());
             }
@@ -291,9 +298,11 @@ public class Game {
      * - Any limits?
      */
     private void heal() {
+        if(playerHealth < 100){
         playerHealth += playerHeal;
 
-        gui.displayMessage("TODO: Implement heal!");
+        gui.displayMessage("You healed for " + playerHeal + ".");
+        }
     }
 
     /**
@@ -326,9 +335,9 @@ public class Game {
         if(lastAttacked != null && lastAttacked.health() > 0 && !attackers.contains(lastAttacked)) 
             attackers.add(lastAttacked);
 
-        for (Monster monster : attackers) {
+        for(int i = 0; i<attackers.size(); i++){
             // shoudn't the monster's damage dealt logic be handle in the Monster class? 
-            int damageTaken = (int)(Math.random() * monster.damage() + 1);
+            int damageTaken = (int)(Math.random() * attackers.get(i).damage() + 1);
             if (shieldPower > 0) {
                 double absorbance = Math.min(damageTaken, shieldPower);
                 damageTaken -= absorbance;
@@ -339,8 +348,16 @@ public class Game {
                 playerHealth -= damageTaken;
                 gui.displayMessage("Monster hits you for " + damageTaken + " damage!");
                 gui.updatePlayerHealth(playerHealth);
+
             }
-            int index = monsters.indexOf(monster);
+            if(attackers.get(i).special() == "Vampire"){
+                attackers.get(i).takeDamage(-damageTaken);
+                //attackers.get(i).heal(damageTaken);
+                gui.displayMessage("Vampire Healed for " + damageTaken + "!");
+            }
+
+
+            int index = monsters.indexOf(attackers.get(i));
             gui.highlightMonster(index);
             gui.pause(300);
             gui.highlightMonster(-1);
