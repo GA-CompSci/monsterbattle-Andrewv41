@@ -5,6 +5,7 @@ public class Monster {
     private double damage;
     private int speed;
     private String special; 
+    private boolean hasRevived = false;
 
     // CONSTRUCTOR
     public Monster(){
@@ -35,4 +36,14 @@ public class Monster {
 
         health -= dmg;
     }
+
+    public boolean revive(){
+        if(!hasRevived) {
+            health = 100;
+            hasRevived = true;
+            return true;
+        }
+        return false;
+    }
+
 }
