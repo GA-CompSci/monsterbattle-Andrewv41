@@ -33,7 +33,7 @@ public class Game {
     private int playerHeal;
     private int playerShield;
     private int revive = 1;
-    private int cooldown = 4;
+    private int specialCharge = 0;
 
     /**
      * Main method - start YOUR game!
@@ -92,7 +92,7 @@ public class Game {
         String[] buttons = { "Attack (" + playerDamage + ")",
                 "Defend (" + playerShield + ")",
                 "Heal (" + playerHeal + ")",
-                "Use Ability (" + cooldown + ")" };
+                "Use Ability (" + specialCharge + "/4 )" };
         gui.setActionButtons(buttons);
 
         // Welcome message
@@ -106,20 +106,28 @@ public class Game {
      * You can modify this if you want!
      */
     private void gameLoop() {
+
+
         // Keep playing while monsters alive and player alive
         while (countLivingMonsters() > 0 && playerHealth > 0) {
             shieldPower = 0;
 
+            // Update player's special ability cooldown
+            String[] buttons = { "Attack (" + playerDamage + ")",
+                "Defend (" + playerShield + ")",
+                "Heal (" + playerHeal + ")",
+                "Use Ability (" + specialCharge + "/4 )" };
+            gui.setActionButtons(buttons);
+
             // PLAYER'S TURN
             gui.displayMessage("Your turn! HP: " + playerHealth);
+
             int action = gui.waitForAction(); // Wait for button click (0-3)
             handlePlayerAction(action);
             gui.updateMonsters(monsters);
             gui.pause(500);
-            cooldown -= 1;
-            if(cooldown < 0){
-                cooldown = 0;
-            }
+
+
 
             // MONSTER'S TURN (if any alive and player alive)
             if (countLivingMonsters() > 0 && playerHealth > 0) {
@@ -256,6 +264,8 @@ public class Game {
      * Attack a monster
      */
     private void attackMonster() {
+        specialCharge++; // charging your special
+
         Monster target = getRandomLivingMonster();
         lastAttacked = target;
         int damage = (int) (Math.random() * playerDamage);// 0-max player damage
@@ -290,7 +300,7 @@ public class Game {
         gui.highlightMonster(index);
         gui.pause(300);
         gui.highlightMonster(-1);
-        cooldown += 1;
+        
 
     }
 
@@ -333,14 +343,16 @@ public class Game {
         int specialShield = 10;
         int specialSpeed = 2;
 
-        if(cooldown = 0){
+        if(specialCharge >= 4){
             playerSpeed += specialSpeed;
             playerDamage += specialDamage;
             playerHeal += specialHeal;
             playerShield += specialShield;
-            cooldown = 0;
+            specialCharge = 0;
             gui.displayMessage("You Used your special ability!!!");
             gui.displayMessage("Attack up: " + specialDamage + " Heal up: " + specialHeal + " Shield up: " + specialShield + " Speed up: " + specialSpeed);
+            gui.setPlayerSpeed(specialSpeed);
+
         }else{
             gui.displayMessage("Choose Another option.  You are too tired to do this.");
         }
